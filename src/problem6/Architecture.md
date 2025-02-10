@@ -1,3 +1,8 @@
+# Prerequisites
+
+Please install Mermaid extension on VSCode editor, if you use VSCode.
+Otherwise please try it online to view this document clearly
+
 # Live Scoreboard API Module
 
 This document outlines the specifications for a **Live Scoreboard API** module that will be implemented on the application server (backend). The goal is to enable real-time updates of a scoreboard displaying the top 10 user scores, ensure secure score updates, and prevent malicious score modifications.
@@ -43,18 +48,16 @@ This document outlines the specifications for a **Live Scoreboard API** module t
 2. **Update User Score**
 
    - **Endpoint**: `POST /score/update`
+   - **Headers**: Use Authorization header to perform authorization and detect the right user
    - **Request Body** (example):
-
      ```json
      {
        "userId": "user123",
-       "authToken": "jwt-or-other-credentials",
        "scoreDelta": 10
      }
      ```
 
      - `userId`: Unique identifier of the user whose score should be updated.
-     - `authToken`: Credentials (e.g., JWT) to authorize the update.
      - `scoreDelta`: The amount by which the score should be incremented (or the new score, depending on implementation preference).
 
    - **Description**: Increments (or updates) a user’s score securely.
@@ -67,13 +70,13 @@ This document outlines the specifications for a **Live Scoreboard API** module t
      ```
    - **Success Code**: `200 OK`
    - **Error Codes**:
-     - `401 Unauthorized` if the `authToken` is invalid or expired.
+     - `401 Unauthorized` if the `Authorization token` is invalid or expired.
      - `400 Bad Request` if required fields are missing or invalid.
      - `500 Internal Server Error` for unexpected failures.
 
 3. **Real-Time Scoreboard Updates**  
    The backend should broadcast score changes to all connected clients in real time. This can be achieved using:
-   - **WebSockets** – The server pushes events when a new top 10 scoreboard is computed. 
+   - **WebSockets** – The server pushes events when a new top 10 scoreboard is computed.
    - **Server-Sent Events (SSE)** – The server streams updates to subscribed clients.
    - **Long Polling** – If real-time protocols are not feasible, fallback to periodic polling by the client (less recommended for real-time). Perhaps this is the easiest approach among the solutions with the help of client-side libraries like Tanstack Query.
 
@@ -86,7 +89,7 @@ This document outlines the specifications for a **Live Scoreboard API** module t
    - Each request to update scores must include a valid `authToken` (e.g., JWT).
    - The server must verify the token and ensure that the `userId` in the request matches the user claims in the token.
    - This prevents malicious users from updating another user’s score.
-
+   
 2. **Input Validation**
 
    - Validate the `scoreDelta` or new score to ensure it follows the expected format and limits (e.g., not negative or excessively large).
