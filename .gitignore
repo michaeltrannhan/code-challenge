@@ -1,1 +1,2 @@
-src/problem2/node_modules/
+src/problem*/node_modules/
+src/problem*/.env
